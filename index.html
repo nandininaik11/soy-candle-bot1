@@ -1,18 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8">
+  <title>Soy Candle Assistant</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Soy Wax Candle Bot</title>
+  <!-- iOS web app -->
+  <meta name="apple-mobile-web-app-capable" content="yes">
 
-<!-- iOS Web App -->
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-
-<link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
 
 <div class="chat-container">
@@ -21,40 +18,14 @@
   <div id="chatBox" class="chat-box"></div>
 
   <div class="buttons">
-    <button onclick="quickMsg('Why should I use soy wax candles?')">Why Soy Wax?</button>
-    <button onclick="quickMsg('I want to place an order')">Place Order</button>
+    <button onclick="whySoyWax()">Why Soy Wax?</button>
+    <button onclick="placeOrder()">Place Order</button>
   </div>
 
   <div class="chat-input">
-    <input type="text" id="userInput" placeholder="Type or speak..." />
+    <input id="userInput" placeholder="Type or speak..." />
     <button onclick="sendMessage()">Send</button>
-    <button onclick="startVoice()">🎤</button>
   </div>
-</div>
-<div id="orderForm" class="order-form" style="display:none;">
-  <h3>🛒 Place Your Order</h3>
-
-  <input id="custName" placeholder="Full Name">
-  <input id="custPhone" placeholder="WhatsApp Number">
-  <textarea id="custAddress" placeholder="Delivery Address"></textarea>
-
-  <select id="flavour">
-    <option>Rose</option>
-    <option>Lavender</option>
-    <option>Ocean</option>
-  </select>
-
-  <select id="size">
-    <option>50 ml - ₹299</option>
-    <option>100 ml - ₹499</option>
-  </select>
-
-  <select id="payment">
-    <option>Cash on Delivery</option>
-    <option>UPI</option>
-  </select>
-
-  <button onclick="submitOrder()">Confirm Order</button>
 </div>
 
 <script src="script.js"></script>
