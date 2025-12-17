@@ -1,0 +1,23 @@
+<h2>📊 Candle Orders Dashboard</h2>
+<table border="1">
+<tr>
+  <th>Name</th><th>Phone</th><th>Flavour</th>
+  <th>Size</th><th>Payment</th><th>Address</th>
+</tr>
+<tbody id="orders"></tbody>
+</table>
+
+<script>
+const orders = JSON.parse(localStorage.getItem("orders")) || [];
+orders.forEach(o => {
+  document.getElementById("orders").innerHTML += `
+  <tr>
+    <td>${o.name}</td>
+    <td>${o.phone}</td>
+    <td>${o.flavour}</td>
+    <td>${o.size}</td>
+    <td>${o.payment}</td>
+    <td>${o.address}</td>
+  </tr>`;
+});
+</script>
