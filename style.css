@@ -1,6 +1,6 @@
 body {
   margin: 0;
-  font-family: Arial;
+  font-family: Arial, sans-serif;
   background: #f5f5f5;
 }
 
@@ -33,10 +33,17 @@ body {
 }
 
 .bot {
+  text-align: left;
   background: white;
   margin: 6px;
   padding: 10px;
   border-radius: 10px;
+}
+
+.buttons {
+  display: flex;
+  justify-content: space-around;
+  padding: 5px;
 }
 
 .chat-input {
@@ -48,32 +55,4 @@ body {
 .chat-input input {
   flex: 1;
   padding: 10px;
-}
-
-.chat-input button {
-  padding: 10px;
-  background: #4b2e2e;
-  color: white;
-  border: none;
-  margin-left: 5px;
-}
-
-.order-form {
-  background: #fff;
-  padding: 15px;
-  border-top: 1px solid #ccc;
-}
-
-.order-form input,
-.order-form textarea,
-.order-form select {
-  width: 100%;
-  padding: 8px;
-  margin: 5px 0;
-}
-
-.buttons {
-  display: flex;
-  justify-content: space-around;
-  padding: 5px;
 }
