@@ -1,6 +1,7 @@
 const chatBox = document.getElementById("chatBox");
 const BACKEND_URL = "https://soy-candle-bot1.vercel.app/api/chat";
 
+
 /* ---------- INIT ---------- */
 addMsg("Hello! I can help you order soy wax candles 🕯️", "bot");
 
@@ -50,4 +51,10 @@ function whySoyWax() {
 function placeOrder() {
   sendToBot("I want to place an order");
 }
+fetch(BACKEND_URL, {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ message: text })
+})
+
 
