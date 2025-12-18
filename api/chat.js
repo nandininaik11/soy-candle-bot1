@@ -1,18 +1,29 @@
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ reply: "Method not allowed" });
-  }
-
   try {
-    const userMessage = req.body.message || "";
+    // Allow only POST
+    if (req.method !== "POST") {
+      return res.status(200).json({ reply: "Method not allowed" });
+    }
 
-    const response = await fetch(
+    // SAFELY read message
+    let userMessage = "";
+    if (req.body && typeof req.body === "object") {
+      userMessage = req.body.message || "";
+    }
+
+    if (!userMessage) {
+      return res.status(200).json({
+        reply: "Please type your message again."
+      });
+    }
+
+    const openaiRes = await fetch(
       "https://api.openai.com/v1/chat/completions",
       {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
+          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
         },
         body: JSON.stringify({
           model: "gpt-4o-mini",
@@ -20,23 +31,24 @@ export default async function handler(req, res) {
             {
               role: "system",
               content:
-                "You are a soy wax candle assistant. Explain benefits and help place orders.",
+                "You are a soy wax candle assistant. Explain benefits of soy wax and help users place candle orders."
             },
-            { role: "user", content: userMessage },
-          ],
-        }),
+            { role: "user", content: userMessage }
+          ]
+        })
       }
     );
 
-    const data = await response.json();
+    const data = await openaiRes.json();
 
     return res.status(200).json({
-      reply: data.choices?.[0]?.message?.content || "No reply",
+      reply: data.choices?.[0]?.message?.content || "No AI reply"
     });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({
-      reply: "Backend crashed",
+
+  } catch (err) {
+    console.error("BACKEND ERROR:", err);
+    return res.status(200).json({
+      reply: "Backend error occurred"
     });
   }
 }
