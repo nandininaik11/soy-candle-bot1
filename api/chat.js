@@ -1,15 +1,14 @@
 export default async function handler(req, res) {
-  try {
-    // Allow only POST
-    if (req.method !== "POST") {
-      return res.status(200).json({ reply: "Method not allowed" });
-    }
+  // Only allow POST requests
+  if (req.method !== "POST") {
+    return res.status(405).json({
+      reply: "Only POST requests are allowed"
+    });
+  }
 
-    // SAFELY read message
-    let userMessage = "";
-    if (req.body && typeof req.body === "object") {
-      userMessage = req.body.message || "";
-    }
+  try {
+    // Safely read user message
+    const userMessage = req.body?.message;
 
     if (!userMessage) {
       return res.status(200).json({
@@ -17,7 +16,8 @@ export default async function handler(req, res) {
       });
     }
 
-    const openaiRes = await fetch(
+    // Call OpenAI API
+    const openaiResponse = await fetch(
       "https://api.openai.com/v1/chat/completions",
       {
         method: "POST",
@@ -30,8 +30,15 @@ export default async function handler(req, res) {
           messages: [
             {
               role: "system",
-              content:
-                "You are a soy wax candle assistant. Explain benefits of soy wax and help users place candle orders."
+              content: `
+You are a friendly Soy Wax Candle Assistant.
+Your job is to:
+- Explain why soy wax candles are better (eco-friendly, non-toxic, longer burn).
+- Help users place candle orders.
+
+Available flavours: Rose, Lavender, Ocean  
+Available sizes: 50 ml (₹299), 100 ml (₹499)
+`
             },
             { role: "user", content: userMessage }
           ]
@@ -39,16 +46,19 @@ export default async function handler(req, res) {
       }
     );
 
-    const data = await openaiRes.json();
+    const data = await openaiResponse.json();
 
+    // Return AI reply
     return res.status(200).json({
-      reply: data.choices?.[0]?.message?.content || "No AI reply"
+      reply: data.choices?.[0]?.message?.content || 
+             "Sorry, I could not generate a response."
     });
 
-  } catch (err) {
-    console.error("BACKEND ERROR:", err);
-    return res.status(200).json({
-      reply: "Backend error occurred"
+  } catch (error) {
+    console.error("API ERROR:", error);
+
+    return res.status(500).json({
+      reply: "Server error. Please try again later."
     });
   }
 }
