@@ -4,13 +4,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    const userMessage = req.body.message;
-
-    if (!process.env.OPENAI_API_KEY) {
-      return res.status(500).json({
-        reply: "OpenAI API key missing"
-      });
-    }
+    const userMessage = req.body.message || "";
 
     const response = await fetch(
       "https://api.openai.com/v1/chat/completions",
@@ -18,7 +12,7 @@ export default async function handler(req, res) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+          "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`,
         },
         body: JSON.stringify({
           model: "gpt-4o-mini",
@@ -26,28 +20,23 @@ export default async function handler(req, res) {
             {
               role: "system",
               content:
-                "You are a soy wax candle assistant. Explain soy wax benefits and help place orders. Flavours: Rose, Lavender, Ocean. Sizes: 50ml ₹299, 100ml ₹499."
+                "You are a soy wax candle assistant. Explain benefits and help place orders.",
             },
-            { role: "user", content: userMessage }
-          ]
-        })
+            { role: "user", content: userMessage },
+          ],
+        }),
       }
     );
 
     const data = await response.json();
 
-    if (!data.choices) {
-      return res.status(500).json({ reply: "AI error" });
-    }
-
-    res.status(200).json({
-      reply: data.choices[0].message.content
+    return res.status(200).json({
+      reply: data.choices?.[0]?.message?.content || "No reply",
     });
-
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      reply: "Server error"
+    return res.status(500).json({
+      reply: "Backend crashed",
     });
   }
 }
