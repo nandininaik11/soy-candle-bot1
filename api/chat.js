@@ -1,3 +1,9 @@
+export default function handler(req, res) {
+  return res.status(200).json({
+    reply: "✅ Backend and frontend are connected successfully"
+  });
+}
+
 export default async function handler(req, res) {
   // Only allow POST requests
   if (req.method !== "POST") {
@@ -62,3 +68,4 @@ Available sizes: 50 ml (₹299), 100 ml (₹499)
     });
   }
 }
+
