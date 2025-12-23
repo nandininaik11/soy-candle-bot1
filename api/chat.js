@@ -1,11 +1,4 @@
-export default function handler(req, res) {
-  return res.status(200).json({
-    reply: "✅ Backend and frontend are connected successfully"
-  });
-}
-
 export default async function handler(req, res) {
-  // Only allow POST requests
   if (req.method !== "POST") {
     return res.status(405).json({
       reply: "Only POST requests are allowed"
@@ -13,7 +6,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    // Safely read user message
     const userMessage = req.body?.message;
 
     if (!userMessage) {
@@ -22,7 +14,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Call OpenAI API
     const openaiResponse = await fetch(
       "https://api.openai.com/v1/chat/completions",
       {
@@ -36,15 +27,8 @@ export default async function handler(req, res) {
           messages: [
             {
               role: "system",
-              content: `
-You are a friendly Soy Wax Candle Assistant.
-Your job is to:
-- Explain why soy wax candles are better (eco-friendly, non-toxic, longer burn).
-- Help users place candle orders.
-
-Available flavours: Rose, Lavender, Ocean  
-Available sizes: 50 ml (₹299), 100 ml (₹499)
-`
+              content:
+                "You are a friendly soy wax candle assistant. Explain benefits of soy wax candles and help users place orders."
             },
             { role: "user", content: userMessage }
           ]
@@ -54,18 +38,15 @@ Available sizes: 50 ml (₹299), 100 ml (₹499)
 
     const data = await openaiResponse.json();
 
-    // Return AI reply
     return res.status(200).json({
-      reply: data.choices?.[0]?.message?.content || 
+      reply: data.choices?.[0]?.message?.content ||
              "Sorry, I could not generate a response."
     });
 
   } catch (error) {
-    console.error("API ERROR:", error);
-
+    console.error(error);
     return res.status(500).json({
       reply: "Server error. Please try again later."
     });
   }
 }
-
