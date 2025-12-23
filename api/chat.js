@@ -14,35 +14,17 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: "gpt-4.1-mini",
-        input: [
-          {
-            role: "system",
-            content: `
-You are a friendly Soy Wax Candle Assistant.
-Explain benefits of soy wax clearly.
-If user asks about ordering, politely guide them to choose fragrance and size.
-Keep replies short and simple.
-`
-          },
-          {
-            role: "user",
-            content: message
-          }
-        ]
+        input: message
       })
     });
 
     const data = await response.json();
 
-    const reply =
-      data.output_text ||
-      data.output?.[0]?.content?.[0]?.text ||
-      "Sorry, I couldn’t reply.";
+    res.status(200).json({
+      reply: data.output_text || "No response"
+    });
 
-    res.status(200).json({ reply });
-
-  } catch (error) {
-    console.error(error);
+  } catch {
     res.status(500).json({ reply: "AI error" });
   }
 }
