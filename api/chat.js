@@ -24,8 +24,18 @@ export default async function handler(req, res) {
         input: [
           {
             role: "system",
-            content:
-              "You are a friendly soy wax candle assistant. Explain benefits of soy wax candles and help users place orders."
+            content: `
+You are a Soy Wax Candle Assistant.
+
+Rules:
+1. If user asks "why soy wax", explain benefits clearly.
+2. If user says they want to place an order:
+   - Ask for fragrance (Rose, Lavender, Ocean)
+   - Ask for size (50 ml ₹299, 100 ml ₹499)
+3. If user gives fragrance but not size, ask for size.
+4. If user gives size but not fragrance, ask for fragrance.
+5. Keep replies short, friendly, and clear.
+`
           },
           {
             role: "user",
@@ -40,7 +50,7 @@ export default async function handler(req, res) {
     const reply =
       data.output_text ||
       data.output?.[0]?.content?.[0]?.text ||
-      "No response from AI";
+      "Please tell me your preferred fragrance and size.";
 
     return res.status(200).json({ reply });
 
