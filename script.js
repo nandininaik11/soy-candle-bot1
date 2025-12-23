@@ -1,60 +1,130 @@
 const chatBox = document.getElementById("chatBox");
 const BACKEND_URL = "https://soy-candle-bot1.vercel.app/api/chat";
 
+// =======================
+// GLOBAL VARIABLES
+// =======================
+const chatBox = document.getElementById("chatBox");
+const optionsDiv = document.getElementById("options");
 
-/* ---------- INIT ---------- */
-addMsg("Hello! I can help you order soy wax candles 🕯️", "bot");
+let selectedFragrance = null;
+let selectedSize = null;
 
-/* ---------- CORE ---------- */
-function addMsg(text, cls) {
+// =======================
+// BASIC CHAT FUNCTIONS
+// =======================
+function addMsg(text, sender) {
   const div = document.createElement("div");
-  div.className = cls;
+  div.className = sender;
   div.innerText = text;
   chatBox.appendChild(div);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
 
+function clearButtons() {
+  optionsDiv.innerHTML = "";
+}
+
+function showButtons(buttons) {
+  clearButtons();
+  buttons.forEach(btn => {
+    const button = document.createElement("button");
+    button.innerText = btn.text;
+    button.onclick = btn.onClick;
+    optionsDiv.appendChild(button);
+  });
+}
+
+// =======================
+// INITIAL GREETING
+// =======================
+function startChat() {
+  addMsg("Hello! I can help you order soy wax candles 🕯️", "bot");
+
+  showButtons([
+    { text: "🛒 Place Order", onClick: startOrder },
+    { text: "🌿 Why Soy Wax?", onClick: explainSoyWax }
+  ]);
+}
+
+startChat();
+
+// =======================
+// INFO FLOW
+// =======================
+function explainSoyWax() {
+  addMsg("Why should I use soy wax candles?", "user");
+
+  addMsg(
+    "Soy wax candles are eco-friendly 🌱, non-toxic, burn longer, and are safer for children and pets.",
+    "bot"
+  );
+
+  showButtons([
+    { text: "🛒 Place Order", onClick: startOrder }
+  ]);
+}
+
+// =======================
+// ORDER FLOW
+// =======================
+function startOrder() {
+  addMsg("I want to place an order", "user");
+
+  addMsg("Great! 😊 Please choose a fragrance:", "bot");
+
+  showButtons([
+    { text: "🌹 Rose", onClick: () => selectFragrance("Rose") },
+    { text: "💜 Lavender", onClick: () => selectFragrance("Lavender") },
+    { text: "🌊 Ocean", onClick: () => selectFragrance("Ocean") }
+  ]);
+}
+
+function selectFragrance(frag) {
+  selectedFragrance = frag;
+  addMsg(frag, "user");
+
+  addMsg("Nice choice! Please select a size 📦", "bot");
+
+  showButtons([
+    { text: "50 ml – ₹299", onClick: () => selectSize("50 ml – ₹299") },
+    { text: "100 ml – ₹499", onClick: () => selectSize("100 ml – ₹499") }
+  ]);
+}
+
+function selectSize(size) {
+  selectedSize = size;
+  addMsg(size, "user");
+
+  addMsg(
+    `Perfect! ✅\n\nFragrance: ${selectedFragrance}\nSize: ${selectedSize}\n\nPlease enter your name and delivery address.`,
+    "bot"
+  );
+
+  clearButtons();
+}
+
+// =======================
+// TEXT INPUT HANDLING
+// =======================
 function sendMessage() {
   const input = document.getElementById("userInput");
   const msg = input.value.trim();
   if (!msg) return;
 
+  addMsg(msg, "user");
   input.value = "";
-  sendToBot(msg);
+
+  // Simple confirmation logic
+  if (selectedFragrance && selectedSize) {
+    addMsg(
+      "Thank you! 😊 Your order has been noted. We will contact you shortly for confirmation and payment details.",
+      "bot"
+    );
+  } else {
+    addMsg(
+      "Please use the buttons above to place your order.",
+      "bot"
+    );
+  }
 }
-
-function sendToBot(text) {
-  addMsg(text, "user");
-  addMsg("Typing...", "bot");
-
-  fetch(BACKEND_URL, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: text })
-  })
-  .then(res => res.json())
-  .then(data => {
-    chatBox.removeChild(chatBox.lastChild);
-    addMsg(data.reply, "bot");
-  })
-  .catch(() => {
-    chatBox.removeChild(chatBox.lastChild);
-    addMsg("❌ Server error. Please try again.", "bot");
-  });
-}
-
-/* ---------- BUTTONS ---------- */
-function whySoyWax() {
-  sendToBot("Why should I use soy wax candles?");
-}
-
-function placeOrder() {
-  sendToBot("I want to place an order");
-}
-fetch(BACKEND_URL, {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ message: text })
-})
-
-
